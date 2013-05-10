@@ -19,6 +19,7 @@ Options:
 """
 
 __author__ = "Serrano <serrano.miser[at]gmail.com>"
+__license__ = "GPLv3"
 __version__ = "0.1"
 
 import ipaddr
