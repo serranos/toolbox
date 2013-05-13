@@ -34,50 +34,40 @@ This prototype uses a `SQLite <http://www.sqlite.org/>`_ database and to get a b
 Table: urls
 ^^^^^^^^^^^
 
-.. data:: id
+:id: *integer*
+     - An autoincremented integer to serve as unique identifier of a URL record.
 
-    An autoincremented integer to serve as unique identifier of a URL record.
+:url: *varchar*
+      - The URL value in its canonical form, unique in the database.
 
-.. data:: url
+:status: *integer*
+         - Describes if a URL is being crawled, ready to be crawled or already crawled. Possible values are: PROCESSING, TODO and DONE.
 
-    The URL value in its canonical form, unique in the database.
+:digest: *varchar*
+         - A SHA512 digest of the webpage content, allowing to detect if it was changed since the last crawling. This can be useful to include in the crawling algorithm (e.g. fast changing webpages may have lower priority for being crawled).
 
-.. data:: status
+:created: *long*
+          - Timestamp of the creation time of the URL record.
 
-    Describes if a URL is being crawled, ready to be crawled or already crawled. Possible values are: PROCESSING, TODO and DONE.
-
-.. data:: digest
-
-    A SHA512 digest of the webpage content, allowing to detect if it was changed since the last crawling. This can be useful to include in the crawling algorithm (e.g. fast changing webpages may have lower priority for being crawled).
-
-.. data:: created
-
-    Timestamp of the creation time of the URL record.
-
-.. data:: updated
-
-    Timestamp of the update time of the URL record. A URL is updated only when it is being crawled, i.e., when :data:`status`
+:updated: *long*
+          - Timestamp of the update time of the URL record. A URL is updated only when it is being crawled, i.e., when *status* is PROCESSING.
 
 Table: links
 ^^^^^^^^^^^^
 
-.. data:: url_id
+:url_id: *integer* 
+         - The **id** of the URL (webpage) where this link was found.
 
-    The :data:`id` of the URL (webpage) where this link was found.
-
-.. data:: link
-
-    The link value, compliant with the URL canonical form.
+:link: *varchar*
+       - The link value, compliant with the URL canonical form.
 
 
 Installation
 ------------
 
-To install ``yetanotherwebcrawler.py`` script dependencies, change to the directory where the source code was extracted and execute:
+To install ``yetanotherwebcrawler.py`` script dependencies, change to the directory where the source code was extracted and execute::
 
-    ::
-
-        $ pip install -r requirements
+    $ pip install -r requirements
 
 Dependencies
 ------------
@@ -88,32 +78,30 @@ Dependencies
 Usage
 -----
 
-Simply run the :file:`yetanotherwebcrawler.py` script with the `-h` flag set:
+Simply run the :file:`yetanotherwebcrawler.py` script with the `-h` flag set::
 
-    ::
+    $ ./yetanotherwebcrawler.py [-h] [-u <URL> [-f <filter hostname>]] [-g <URL>] [-a] [-d <level>]
 
-        $ ./yetanotherwebcrawler.py [-h] [-u <URL> [-f <filter hostname>]] [-g <URL>] [-a] [-d <level>]
+    Options:
 
-        Options:
+    -h, --help
+    Show this help message and exit
 
-            -h, --help
-            Show this help message and exit
+    -u <URL>, --url=<URL>
+    First URL to begin the crawling operation
 
-            -u <URL>, --url=<URL>
-            First URL to begin the crawling operation
+    -f <filter hostname>, --filter-hostname=<filter hostname>
+    Only crawl URLs from the hierarchy of a specific hostname.
 
-            -f <filter hostname>, --filter-hostname=<filter hostname>
-            Only crawl URLs from the hierarchy of a specific hostname.
+    -g <URL>, --get-url=<URL>
+    Get specific URL record from the database
 
-            -g <URL>, --get-url=<URL>
-            Get specific URL record from the database
+    -a, --all
+    Get all URLs records from the database
 
-            -a, --all
-            Get all URLs records from the database
-
-            -d, --debug <level>
-            Filter out log messages with priority below level.
-            Level may be: FATAL, ERROR, WARNING, NOTE, INFO, DEBUG.
+    -d, --debug <level>
+    Filter out log messages with priority below level.
+    Level may be: FATAL, ERROR, WARNING, NOTE, INFO, DEBUG.
 
 
 To stop the script press CTRL+C.
@@ -121,35 +109,25 @@ To stop the script press CTRL+C.
 Examples
 --------
 
-Start crawling from a specific URL (e.g. `Example website <http://example.org/>`_) without a specific end condition:
+Start crawling from a specific URL (e.g. `Example website <http://example.org/>`_) without a specific end condition::
 
-    ::
+    $ ./yetanotherwebcrawler.py -u http://example.org/
 
-        $ ./yetanotherwebcrawler.py -u http://example.org/
+Start crawling from a specific URL (e.g. `Example website <http://example.org/>`_) but limit the webpages to a specific hostname suffix (e.g. example.org)::
 
-Start crawling from a specific URL (e.g. `Example website <http://example.org/>`_) but limit the webpages to a specific hostname suffix (e.g. example.org):
+    $ ./yetanotherwebcrawler.py -u http://example.org/ -f example.org
 
-    ::
+Restart crawling from a previously interrupted crawling operation::
 
-        $ ./yetanotherwebcrawler.py -u http://example.org/ -f example.org
+    $ ./yetanotherwebcrawler.py
 
-Restart crawling from a previously interrupted crawling operation:
+Get details of a specific URL from the database::
 
-    ::
+    $ ./yetanotherwebcrawler.py -g http://example.org/
 
-        $ ./yetanotherwebcrawler.py
+Get all URLs from the database::
 
-Get details of a specific URL from the database:
-
-    ::
-
-        $ ./yetanotherwebcrawler.py -g http://example.org/
-
-Get all URLs from the database:
-
-    ::
-
-        $ ./yetanotherwebcrawler.py -a
+    $ ./yetanotherwebcrawler.py -a
 
 TODO
 ----
@@ -160,7 +138,7 @@ TODO
 * Consider resource exhaustion constraints, whether at the source or at the destination of the crawling operations, avoiding being disruptive to the web and increasing crawling efficiency;
 * Develop the "crawl to a certain depth" feature. This is simple, considering I already have the Links associated to the URL in the database, and their relationship;
 * Reduce the connection timeout of the requests so that the crawler can be faster to understand broken Links, even create a different process to check for broken links in the database;
-* Parse the existing URLs and get each segment of its path in order to reach certain URLs that may not be explicitly referenced by others. This algorithm is also known as the `path ascending algorithm <http://en.wikipedia.org/wiki/Web_crawler#Path-ascending_crawling>`;
+* Parse the existing URLs and get each segment of its path in order to reach certain URLs that may not be explicitly referenced by others. This algorithm is also known as the `path ascending algorithm <http://en.wikipedia.org/wiki/Web_crawler#Path-ascending_crawling>`_;
 * Provide the possibility to actually download a website, specifying what kind of content to download (e.g. images, stylesheets);
 * Enable crawling using other operations (e.g. POST) and add support for AJAX requests;
 * Allow crawling other types of schemes (e.g. FTP);
