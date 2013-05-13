@@ -78,7 +78,7 @@ Dependencies
 Usage
 -----
 
-Simply run the :file:`yetanotherwebcrawler.py` script with the `-h` flag set::
+Simply run the ``yetanotherwebcrawler.py`` script with the `-h` flag set::
 
     $ ./yetanotherwebcrawler.py [-h] [-u <URL> [-f <filter hostname>]] [-g <URL>] [-a] [-d <level>]
 
