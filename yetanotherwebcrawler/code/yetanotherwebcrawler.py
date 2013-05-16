@@ -548,7 +548,7 @@ def main(argv=None):
     try:
         try:
             options, args = getopt.getopt(argv[1:], "hu:f:g:ad:", ["help",
-                "url=", "filter=", "get=", "all", "debug"])
+                "url=", "filter=", "get=", "all", "debug="])
             for opt, arg in options:
                 if opt in ('-h', '--help'):
                     raise Usage(__doc__)
